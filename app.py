@@ -339,7 +339,7 @@ def homepage():
                     .limit(100)
                     .all())
 
-        return render_template('home.html', messages=messages, form=g.csrf_form)
+        return render_template('home.html', messages=messages)
     else:
         return render_template('home-anon.html')
 
