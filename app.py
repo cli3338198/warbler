@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms import UserAddForm, LoginForm, MessageForm
+from forms import UserAddForm, LoginForm, MessageForm, CSRFForm
 from models import db, connect_db, User, Message
 
 load_dotenv()
@@ -20,7 +20,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     os.environ['DATABASE_URL'].replace("postgres://", "postgresql://"))
 app.config['SQLALCHEMY_ECHO'] = False
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 toolbar = DebugToolbarExtension(app)
 
@@ -29,6 +29,16 @@ connect_db(app)
 
 ##############################################################################
 # User signup/login/logout
+
+@app.before_request
+def add_csrf_to_g():
+    """If user is logged in, add a CSRF form to Flask global."""
+
+    if CURR_USER_KEY in session:
+        g.csrf_form = CSRFForm()
+
+    else:
+        g.csrf_form = None
 
 
 @app.before_request
@@ -119,6 +129,12 @@ def logout():
     """Handle logout of user and redirect to homepage."""
 
     form = g.csrf_form
+
+    if form.validate_on_submit():
+        flash("You have successfully logged out.", "success")
+        session.pop(CURR_USER_KEY, None)
+
+    return redirect("/")
 
     # IMPLEMENT THIS AND FIX BUG
     # DO NOT CHANGE METHOD ON ROUTE
@@ -323,8 +339,7 @@ def homepage():
                     .limit(100)
                     .all())
 
-        return render_template('home.html', messages=messages)
-
+        return render_template('home.html', messages=messages, form=g.csrf_form)
     else:
         return render_template('home-anon.html')
 

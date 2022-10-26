@@ -16,6 +16,12 @@ body.error-404 {
   border-radius: 50px;
 }
 
+.btn-link {
+  color: #66757f;
+  font-size: 13px;
+  font-weight: bold;
+}
+
 .btn:hover {
   cursor: pointer;
 }
@@ -31,7 +37,7 @@ body.error-404 {
   z-index: 9999;
 }
 
-.navbar a {
+.navbar a{
   color: #66757f;
   font-size: 13px;
   font-weight: bold;
