@@ -26,6 +26,11 @@ body.error-404 {
   cursor: pointer;
 }
 
+.star {
+  display: inline;
+  z-index: 1000;
+}
+
 /* ======================= Nav */
 
 .navbar {
@@ -37,7 +42,7 @@ body.error-404 {
   z-index: 9999;
 }
 
-.navbar a{
+.navbar a {
   color: #66757f;
   font-size: 13px;
   font-weight: bold;

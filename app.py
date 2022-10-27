@@ -6,7 +6,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, CSRFForm, UserEditForm
-from models import db, connect_db, User, Message
+from models import db, connect_db, User, Message, Like
 
 load_dotenv()
 
@@ -346,6 +346,48 @@ def delete_message(message_id):
 
 
 ##############################################################################
+# Add a like
+
+@app.post('/likes/<int:message_id>/add')
+def add_like(message_id):
+    """Add/remove a like for a message.
+        if found, remove the like
+        else add the like
+    """
+
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+
+    # breakpoint()
+
+    target_message = Message.query.get_or_404(message_id)
+
+    print('%%%%%%%%%%%%%%%%%%%%%%%%%%')
+    print(target_message.users_who_have_liked)
+
+    breakpoint()
+
+    # if not like:
+    #      Likes.add_like(
+    #         message_being_liked_id=message_id, 
+    #         user_liking_id=g.user.id
+    #     )
+
+    # else:
+    #     db.session.delete(like)
+
+    # db.session.commit()
+
+    
+
+    # return "You successfully liked a message."
+
+    
+
+
+
+##############################################################################
 # Homepage and error pages
 
 
@@ -369,7 +411,13 @@ def homepage():
                     .limit(100)
                     .all())
 
-        return render_template('home.html', messages=messages)
+        messages_liked = g.user.messages_liked
+
+        return render_template(
+            'home.html', 
+            messages=messages, 
+            messages_liked=messages_liked
+        )
     else:
         return render_template('home-anon.html')
 

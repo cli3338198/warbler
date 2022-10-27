@@ -55,17 +55,24 @@
             <div class="message-area">
               <a href="/users/{{ msg.user.id }}">@{{ msg.user.username }}</a>
               <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
-              {% if msg.user != g.user %}
-              <form action="" method="POST">
-                {{ g.csrf_form.hidden_tag() }}
-                <span>
-                  <button type="submit" class="btn"><i class="bi bi-star"></i></button>
-                </span>
-              </form>
-              {% endif %}
+              
               <p>{{ msg.text }}</p>
             </div>
           </li>
+          {% if msg.user != g.user %}
+          {% if g.csrf_form %}
+          <form action="/likes/{{ msg.id }}/add" method="POST" class="star">
+            {{ g.csrf_form.hidden_tag() }}
+            <button type="submit" class="btn btn-link">
+              {% if msg in messages_liked %}
+              <i class="bi bi-star-filled"></i>
+              {% else %}
+              <i class="bi bi-star"></i>
+              {% endif %}
+            </button>
+          </form>
+          {% endif %}
+          {% endif %}
         {% endfor %}
       </ul>
     </div>

@@ -29,16 +29,21 @@ class Follows(db.Model):
         primary_key=True,
     )
 
+    
+
+
 
 class Like(db.Model):
     """Connection between a message and a user."""
 
     __tablename__ = 'likes'
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True,
-    )
+    # id = db.Column(
+    #     db.Integer,
+    #     primary_key=True,
+    # )
+
+    #TODO: composite key
 
     message_being_liked_id = db.Column(
         db.Integer,
@@ -51,6 +56,15 @@ class Like(db.Model):
         db.ForeignKey('users.id', ondelete="cascade"),
         primary_key=True,
     )
+
+    @classmethod
+    def add_like(cls, message_being_liked_id, user_liking_id):
+        """Adds like to database and returns a like"""
+
+        return cls(
+            message_being_liked_id=message_being_liked_id, 
+            user_liking_id=user_liking_id
+        )
 
 
 class User(db.Model):
@@ -111,7 +125,8 @@ class User(db.Model):
     messages_liked = db.relationship(
         "Message",
         secondary="likes",
-        backref="User")
+        backref="users_who_have_liked"
+    )
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"
