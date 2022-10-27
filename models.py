@@ -30,6 +30,29 @@ class Follows(db.Model):
     )
 
 
+class Like(db.Model):
+    """Connection between a message and a user."""
+
+    __tablename__ = 'likes'
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+    )
+
+    message_being_liked_id = db.Column(
+        db.Integer,
+        db.ForeignKey('messages.id', ondelete="cascade"),
+        primary_key=True,
+    )
+
+    user_liking_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id', ondelete="cascade"),
+        primary_key=True,
+    )
+
+
 class User(db.Model):
     """User in the system."""
 
@@ -83,6 +106,14 @@ class User(db.Model):
         primaryjoin=(Follows.user_being_followed_id == id),
         secondaryjoin=(Follows.user_following_id == id),
         backref="following",
+    )
+
+    likes = db.relationship(
+        "User",
+        secondary="likes",
+        primaryjoin=(Like.message_being_liked_id == id),
+        secondaryjoin=(Like.user_liking_id == id),
+        backref="user",
     )
 
     def __repr__(self):
