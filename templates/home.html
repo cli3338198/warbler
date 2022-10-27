@@ -56,7 +56,12 @@
               <a href="/users/{{ msg.user.id }}">@{{ msg.user.username }}</a>
               <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
               {% if msg.user != g.user %}
-              <span><i class="bi bi-star"></i></span>
+              <form action="" method="POST">
+                {{ g.csrf_form.hidden_tag() }}
+                <span>
+                  <button type="submit" class="btn"><i class="bi bi-star"></i></button>
+                </span>
+              </form>
               {% endif %}
               <p>{{ msg.text }}</p>
             </div>
