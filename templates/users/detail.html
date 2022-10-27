@@ -61,16 +61,16 @@
               </button>
             </form>
             {% elif g.user %}
-            {% if g.user.is_following(user) %}
-            <form method="POST"
-                  action="/users/stop-following/{{ user.id }}">
-              <button class="btn btn-primary">Unfollow</button>
-            </form>
-            {% else %}
-            <form method="POST" action="/users/follow/{{ user.id }}">
-              <button class="btn btn-outline-primary">Follow</button>
-            </form>
-            {% endif %}
+              {% if g.user.is_following(user) %}
+              <form method="POST"
+                    action="/users/stop-following/{{ user.id }}">
+                <button class="btn btn-primary">Unfollow</button>
+              </form>
+              {% else %}
+              <form method="POST" action="/users/follow/{{ user.id }}">
+                <button class="btn btn-outline-primary">Follow</button>
+              </form>
+              {% endif %}
             {% endif %}
           </li>
 
@@ -94,7 +94,7 @@
       {% if user.location %}
         {{ user.location }}
       {% else %}
-        <span>Nowheresveille, USA</span>
+        <span>Unknown</span>
       {% endif %}
     </p>
   </div>
