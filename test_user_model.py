@@ -60,11 +60,11 @@ class UserModelTestCase(TestCase):
         u1 = User.query.get(self.u1_id)
 
         self.assertEqual(
-            repr(u1), 
+            repr(u1),
             f"<User #{self.u1_id}: u1, u1@email.com>")
 
         self.assertEqual(
-            repr(User.query.get(self.u1_id)), 
+            repr(User.query.get(self.u1_id)),
             f"<User #{self.u1_id}: u1, u1@email.com>")
 
     # Does is_following successfully detect when user1 is following user2?
@@ -133,7 +133,32 @@ class UserModelTestCase(TestCase):
             User.signup("u3", "u3@email.com", "", None)
 
     # Does User.authenticate successfully return a user when given a valid username and password?
-    
+    def test_authenticate_user(self):
+        """Test if user is returned being given a valid username and password.
+        """
+
+        User.signup("testname", "u3@email.com", "password", None)
+
+        user = User.authenticate("testname", "password")
+
+        self.assertTrue(user)
+
     # Does User.authenticate fail to return a user when the username is invalid?
-    
+    def test_authenticate_username_invalid(self):
+        """Test if False is returned if invalid username is given.
+        """
+
+        User.signup("testname", "u3@email.com", "password", None)
+        user = User.authenticate("", password="password")
+
+        self.assertFalse(user)
+
     # Does User.authenticate fail to return a user when the password is invalid?
+    def test_authenticate_password_invalid(self):
+        """Test if False is returned if invalid password is given.
+        """
+
+        User.signup("testname", "u3@email.com", "password", None)
+        user = User.authenticate("", password="paxxword")
+
+        self.assertFalse(user)
