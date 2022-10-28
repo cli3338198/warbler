@@ -19,7 +19,6 @@
             <a href="/users/{{ message.user.id }}">
               @{{ message.user.username }}
             </a>
-            {% include 'star_form.html' %}
             {% if g.user %}
             {% if g.user.id == message.user.id %}
             <form method="POST"
@@ -44,7 +43,17 @@
           <p class="single-message">{{ message.text }}</p>
           <span class="text-muted">
               {{ message.timestamp.strftime('%d %B %Y') }}
-            </span>
+          </span>
+          {% if msg.user != g.user %}
+            {% if g.csrf_form %}
+              <form action="/likes/{{ msg.id }}/add" method="POST" class="star">
+                {{ g.csrf_form.hidden_tag() }}
+                <button type="submit" class="btn btn-link">
+                  <i class="bi bi-hand-thumbs-up{{ '-fill' if msg in g.user.messages_liked else ''}}"></i>
+                </button>
+              </form>
+            {% endif %}
+          {% endif %}
         </div>
       </li>
     </ul>

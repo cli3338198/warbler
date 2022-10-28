@@ -27,7 +27,8 @@ body.error-404 {
 }
 
 .star {
-  display: inline;
+  display: inline-block;
+  position: relative;
   z-index: 1000;
   /* Place star inside of white box */
 }

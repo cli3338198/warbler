@@ -17,20 +17,20 @@
         <span class="text-muted">
           {{ msg.timestamp.strftime('%d %B %Y') }}
         </span>
+        {% if msg.user != g.user %}
+          {% if g.csrf_form %}
+          <form action="/likes/{{ msg.id }}/add" method="POST" class="star">
+            {{ g.csrf_form.hidden_tag() }}
+            <button type="submit" class="btn btn-link">
+              <i class="bi bi-hand-thumbs-up-fill"></i>
+            </button>
+          </form>
+          {% endif %}
+        {% endif %}
         <p>{{ msg.text }}</p>
       </div>
     </li>
 
-    {% if msg.user != g.user %}
-      {% if g.csrf_form %}
-      <form action="/likes/{{ msg.id }}/add" method="POST" class="star">
-        {{ g.csrf_form.hidden_tag() }}
-        <button type="submit" class="btn btn-link">
-          <i class="bi bi-star-fill"></i>
-        </button>
-      </form>
-      {% endif %}
-    {% endif %}
 
     {% endfor %}
 

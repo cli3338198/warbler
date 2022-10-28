@@ -5,14 +5,7 @@
     <form action="/likes/{{ msg.id }}/add" method="POST" class="star">
       {{ g.csrf_form.hidden_tag() }}
       <button type="submit" class="btn btn-link">
-        {% if msg in messages_liked %}
-        <!-- Scalability, find each template
-        Add model a method which check if msg in messages_liked
-        Can be put on User or Message model -->
-          <i class="bi bi-star-fill"></i>
-        {% else %}
-          <i class="bi bi-star"></i>
-        {% endif %}
+        <i class="bi bi-hand-thumbs-up{{ '-fill' if msg in g.user.messages_liked else ''}}"></i>
       </button>
     </form>
   {% endif %}

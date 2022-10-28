@@ -5,7 +5,7 @@
 <div id="warbler-hero"
      class="full-width"
      >
-  <img src="{{ user.header_image_url }}" alt="{{ user.username }}" 
+  <img src="{{ user.header_image_url }}" alt="{{ user.username }}"
   style="height: 100%; width: 100%"/>
   <!-- TODO: fix this CSS header image -->
 </div>
@@ -47,9 +47,11 @@
           </li>
           <li class="stat">
             <p class="small">Likes</p>
-            <a href="/users/{{ user.id }}/likes">
-              <h4>{{ user.messages_liked | length }}</h4>
-            </a>
+            <h4>
+              <a href="/users/{{ user.id }}/likes">
+                {{ user.messages_liked | length }}
+              </a>
+            </h4>
           </li>
 
           <li class="ms-auto">
