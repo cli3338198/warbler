@@ -242,7 +242,9 @@ def stop_following(follow_id):
 @app.route('/users/profile', methods=["GET", "POST"])
 def profile():
     """Update profile for current user.
-        TODO:
+        Present edit profile form
+        Update with new data or retain existing data
+        Redirect to partially filled form if data is invalid.
     """
 
     if not g.user:
@@ -327,7 +329,11 @@ def show_message(message_id):
 
     messages_liked = g.user.messages_liked
 
-    return render_template('messages/show.html', message=msg, messages_liked=messages_liked, msg=msg)
+    return render_template(
+        'messages/show.html',
+        message=msg,
+        messages_liked=messages_liked,
+        msg=msg)
 
 
 @app.post('/messages/<int:message_id>/delete')
@@ -357,7 +363,6 @@ def add_like(message_id):
     """Add/remove a like for a message.
         if found, remove the like
         else add the like
-        return status 204
     """
 
     if not g.user:
@@ -371,7 +376,8 @@ def add_like(message_id):
     if g.user in users_who_have_liked:
         # unlike the message
         like, = Like.query.filter(
-            (Like.message_being_liked_id == message_id) & (Like.user_liking_id == g.user.id)
+            (Like.message_being_liked_id == message_id) &
+            (Like.user_liking_id == g.user.id)
             ).all()
 
         db.session.delete(like)
@@ -386,8 +392,8 @@ def add_like(message_id):
 
     db.session.commit()
 
-    # TODO: return to original location?!??!!?
     return redirect('/')
+
 
 @app.get('/users/<int:user_id>/likes')
 def show_user_likes(user_id):
@@ -401,9 +407,12 @@ def show_user_likes(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    liked_messages = user.messages_liked    
+    liked_messages = user.messages_liked
 
-    return render_template('/users/liked_messages.html', liked_messages=liked_messages, user=user)
+    return render_template(
+        '/users/liked_messages.html',
+        liked_messages=liked_messages,
+        user=user)
 
 ##############################################################################
 # Homepage and error pages
@@ -432,8 +441,8 @@ def homepage():
         messages_liked = g.user.messages_liked
 
         return render_template(
-            'home.html', 
-            messages=messages, 
+            'home.html',
+            messages=messages,
             messages_liked=messages_liked
         )
     else:

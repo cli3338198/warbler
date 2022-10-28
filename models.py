@@ -29,21 +29,12 @@ class Follows(db.Model):
         primary_key=True,
     )
 
-    
-
 
 
 class Like(db.Model):
     """Connection between a message and a user."""
 
     __tablename__ = 'likes'
-
-    # id = db.Column(
-    #     db.Integer,
-    #     primary_key=True,
-    # )
-
-    #TODO: composite key
 
     message_being_liked_id = db.Column(
         db.Integer,
@@ -62,7 +53,7 @@ class Like(db.Model):
         """Adds like to database and returns a like"""
 
         return cls(
-            message_being_liked_id=message_being_liked_id, 
+            message_being_liked_id=message_being_liked_id,
             user_liking_id=user_liking_id
         )
 
