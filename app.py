@@ -380,8 +380,6 @@ def add_or_remove_like(message_id):
 
     db.session.commit()
 
-    #TODO: fix to go to previous url
-
     return redirect('/')
 
 
