@@ -1,0 +1,18 @@
+{% block content %}
+
+{% if msg.user != g.user %}
+  {% if g.csrf_form %}
+    <form action="/likes/{{ msg.id }}/add" method="POST" class="star">
+      {{ g.csrf_form.hidden_tag() }}
+      <button type="submit" class="btn btn-link">
+        {% if msg in messages_liked %}
+          <i class="bi bi-star-fill"></i>
+        {% else %}
+          <i class="bi bi-star"></i>
+        {% endif %}
+      </button>
+    </form>
+  {% endif %}
+{% endif %}
+
+{% endblock %}

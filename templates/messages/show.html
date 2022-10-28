@@ -19,7 +19,7 @@
             <a href="/users/{{ message.user.id }}">
               @{{ message.user.username }}
             </a>
-
+            {% include 'star_form.html' %}
             {% if g.user %}
             {% if g.user.id == message.user.id %}
             <form method="POST"

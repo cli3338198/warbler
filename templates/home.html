@@ -59,20 +59,7 @@
               <p>{{ msg.text }}</p>
             </div>
           </li>
-          {% if msg.user != g.user %}
-          {% if g.csrf_form %}
-          <form action="/likes/{{ msg.id }}/add" method="POST" class="star">
-            {{ g.csrf_form.hidden_tag() }}
-            <button type="submit" class="btn btn-link">
-              {% if msg in messages_liked %}
-              <i class="bi bi-star-filled"></i>
-              {% else %}
-              <i class="bi bi-star"></i>
-              {% endif %}
-            </button>
-          </form>
-          {% endif %}
-          {% endif %}
+          {% include 'star_form.html' %}
         {% endfor %}
       </ul>
     </div>

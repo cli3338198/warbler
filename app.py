@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, render_template, request, flash, redirect, session, g, Response
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
@@ -39,7 +39,6 @@ def add_csrf_to_g():
 
     else:
         g.csrf_form = None
-
 
 @app.before_request
 def add_user_to_g():
@@ -175,7 +174,9 @@ def show_user(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    return render_template('users/show.html', user=user)
+    messages_liked = user.messages_liked
+
+    return render_template('users/show.html', user=user, messages_liked=messages_liked)
 
 
 @app.get('/users/<int:user_id>/following')
@@ -323,7 +324,10 @@ def show_message(message_id):
         return redirect("/")
 
     msg = Message.query.get_or_404(message_id)
-    return render_template('messages/show.html', message=msg)
+
+    messages_liked = g.user.messages_liked
+
+    return render_template('messages/show.html', message=msg, messages_liked=messages_liked, msg=msg)
 
 
 @app.post('/messages/<int:message_id>/delete')
@@ -353,39 +357,53 @@ def add_like(message_id):
     """Add/remove a like for a message.
         if found, remove the like
         else add the like
+        return status 204
     """
 
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    # breakpoint()
-
     target_message = Message.query.get_or_404(message_id)
 
-    print('%%%%%%%%%%%%%%%%%%%%%%%%%%')
-    print(target_message.users_who_have_liked)
+    users_who_have_liked = target_message.users_who_have_liked
 
-    breakpoint()
+    if g.user in users_who_have_liked:
+        # unlike the message
+        like, = Like.query.filter(
+            (Like.message_being_liked_id == message_id) & (Like.user_liking_id == g.user.id)
+            ).all()
 
-    # if not like:
-    #      Likes.add_like(
-    #         message_being_liked_id=message_id, 
-    #         user_liking_id=g.user.id
-    #     )
+        db.session.delete(like)
 
-    # else:
-    #     db.session.delete(like)
+    else:
+        # else like the message
+        like = Like(
+            message_being_liked_id=message_id,
+            user_liking_id=g.user.id
+        )
+        db.session.add(like)
 
-    # db.session.commit()
+    db.session.commit()
 
-    
+    # TODO: return to original location?!??!!?
+    return redirect('/')
 
-    # return "You successfully liked a message."
+@app.get('/users/<int:user_id>/likes')
+def show_user_likes(user_id):
+    """Show the users likes page
+        Get all users liked messages
+    """
 
-    
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
 
+    user = User.query.get_or_404(user_id)
 
+    liked_messages = user.messages_liked    
+
+    return render_template('/users/liked_messages.html', liked_messages=liked_messages, user=user)
 
 ##############################################################################
 # Homepage and error pages
