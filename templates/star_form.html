@@ -6,6 +6,9 @@
       {{ g.csrf_form.hidden_tag() }}
       <button type="submit" class="btn btn-link">
         {% if msg in messages_liked %}
+        <!-- Scalability, find each template
+        Add model a method which check if msg in messages_liked
+        Can be put on User or Message model -->
           <i class="bi bi-star-fill"></i>
         {% else %}
           <i class="bi bi-star"></i>

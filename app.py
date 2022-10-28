@@ -360,10 +360,13 @@ def delete_message(message_id):
 
 @app.post('/likes/<int:message_id>/add')
 def add_like(message_id):
+    #TODO: change name since add/remove like
     """Add/remove a like for a message.
         if found, remove the like
         else add the like
     """
+    #TODO: Docstring should say what you do and where you go
+    #TODO: Need CSRF Protection!
 
     if not g.user:
         flash("Access unauthorized.", "danger")
@@ -379,6 +382,9 @@ def add_like(message_id):
             (Like.message_being_liked_id == message_id) &
             (Like.user_liking_id == g.user.id)
             ).all()
+        #! like = blah dot one_or_none, tuple is unnecessary
+        # Not having full list makes it easier to scale
+        #* Method in model is not being used
 
         db.session.delete(like)
 
@@ -389,6 +395,8 @@ def add_like(message_id):
             user_liking_id=g.user.id
         )
         db.session.add(like)
+
+        # *378 to 396 would be good model method
 
     db.session.commit()
 

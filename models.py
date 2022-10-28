@@ -51,6 +51,8 @@ class Like(db.Model):
     @classmethod
     def add_like(cls, message_being_liked_id, user_liking_id):
         """Adds like to database and returns a like"""
+        #TODO: Only makes a like, maybe not a helpful method.
+        # Does not add to database.
 
         return cls(
             message_being_liked_id=message_being_liked_id,
