@@ -369,6 +369,9 @@ def add_or_remove_like(message_id):
 
     target_message = Message.query.get_or_404(message_id)
 
+    if target_message in g.user.messages:
+        return ("", 403)
+
     if target_message in g.user.messages_liked:
         g.user.messages_liked.remove(target_message)
 
@@ -377,9 +380,9 @@ def add_or_remove_like(message_id):
 
     db.session.commit()
 
-    hidden_url = form.hidden_url.data
+    #TODO: fix to go to previous url
 
-    return redirect(hidden_url)
+    return redirect('/')
 
 
 @app.get('/users/<int:user_id>/likes')
