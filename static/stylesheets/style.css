@@ -30,7 +30,6 @@ body.error-404 {
   display: inline-block;
   position: relative;
   z-index: 1000;
-  /* Place star inside of white box */
 }
 
 /* ======================= Nav */

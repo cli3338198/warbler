@@ -40,6 +40,7 @@ def add_csrf_to_g():
     else:
         g.csrf_form = None
 
+
 @app.before_request
 def add_user_to_g():
     """If we're logged in, add curr user to Flask global."""
@@ -174,9 +175,7 @@ def show_user(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    messages_liked = user.messages_liked
-
-    return render_template('users/show.html', user=user, messages_liked=messages_liked)
+    return render_template('users/show.html', user=user)
 
 
 @app.get('/users/<int:user_id>/following')
@@ -327,12 +326,9 @@ def show_message(message_id):
 
     msg = Message.query.get_or_404(message_id)
 
-    messages_liked = g.user.messages_liked
-
     return render_template(
         'messages/show.html',
         message=msg,
-        messages_liked=messages_liked,
         msg=msg)
 
 
@@ -359,48 +355,31 @@ def delete_message(message_id):
 # Add a like
 
 @app.post('/likes/<int:message_id>/add')
-def add_like(message_id):
-    #TODO: change name since add/remove like
+def add_or_remove_like(message_id):
     """Add/remove a like for a message.
         if found, remove the like
         else add the like
+        redirects to Home Page
     """
-    #TODO: Docstring should say what you do and where you go
-    #TODO: Need CSRF Protection!
+    form = g.csrf_form
 
-    if not g.user:
+    if not g.user or not form.validate_on_submit():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
     target_message = Message.query.get_or_404(message_id)
 
-    users_who_have_liked = target_message.users_who_have_liked
-
-    if g.user in users_who_have_liked:
-        # unlike the message
-        like, = Like.query.filter(
-            (Like.message_being_liked_id == message_id) &
-            (Like.user_liking_id == g.user.id)
-            ).all()
-        #! like = blah dot one_or_none, tuple is unnecessary
-        # Not having full list makes it easier to scale
-        #* Method in model is not being used
-
-        db.session.delete(like)
+    if target_message in g.user.messages_liked:
+        g.user.messages_liked.remove(target_message)
 
     else:
-        # else like the message
-        like = Like(
-            message_being_liked_id=message_id,
-            user_liking_id=g.user.id
-        )
-        db.session.add(like)
-
-        # *378 to 396 would be good model method
+        g.user.messages_liked.append(target_message)
 
     db.session.commit()
 
-    return redirect('/')
+    hidden_url = form.hidden_url.data
+
+    return redirect(hidden_url)
 
 
 @app.get('/users/<int:user_id>/likes')
@@ -446,12 +425,9 @@ def homepage():
                     .limit(100)
                     .all())
 
-        messages_liked = g.user.messages_liked
-
         return render_template(
             'home.html',
             messages=messages,
-            messages_liked=messages_liked
         )
     else:
         return render_template('home-anon.html')
